@@ -1,0 +1,188 @@
+<div class="col-12 md:col-12 lg:col-6">
+                  <div class="field">
+                    <label for="email">{{ "ADDCUSTLABLES.EMAIL" | translate }}</label>                    
+
+                    <!-- <div class="flex align-items-center gap-2 justify-content-between"> -->
+                        <!-- <div class="w-full p-inputgroup align-items-start"> -->
+                          <p-autoComplete formControlName="email" [suggestions]="userDropdownData"
+                            (completeMethod)="CommonFilterForAutoComplete($event, 'email')" (onUnselect)="onUnselect('email')"
+                            placeholder="{{'ADDCUSTLABLES.ENTEREMAIL' | translate}}" field="email"
+                            (onBlur)="selectEmail($event, 'email')" [multiple]="true" (keyup)="emailKeyup($event, 'email')">
+                            <ng-template let-selectedItem pTemplate="selectedItem">
+                              <div class="content-box" [ngClass]="selectedItem.isError ? 'error': ''"
+                              *ngIf="selectedItem.email !== null">
+                              <span class="label-text">{{selectedItem.email}}</span>
+                            </div>
+                            </ng-template>
+                          </p-autoComplete>
+                           
+                        <!-- </div> -->
+                        <div class="invalid-feedback" *ngIf="isEmailError">
+                          {{'MESSAGETITLE.INVALID_EMAIL' | translate }}
+                        </div>
+                      
+                    <!-- </div> -->
+                    
+                    <div class="flex align-items-start justify-content-between pt-1">                      
+                      <span class="text-primary-3 cursor-pointer text-primary-3 cursor-pointer line-height-1" (click)="addEmailsOverlayPanel.toggle($event)">
+                        <span class="fs-12">+</span> 
+                        <span class="underline underline text-primary-3 fs-12"> 
+                            Add Another Email
+                          </span>
+                      </span>
+
+                      <div class="flex align-items-center gap-2">
+                        <div class="editIcon surface-200 border-circle py-1 px-1 cursor-pointer" (click)="addEmailsOverlayPanel.toggle($event)">
+                          <i class="pi pi-pencil text-sm text-secondary-2 fs-10 hover:text-primary-1-branding" 
+                          pTooltip="Edit Emails" tooltipPosition="top" tooltipStyleClass="cmn-tooltip"></i>
+                        </div> 
+                        <div class="sub-title-4 cursor-pointer mt-1" (click)="moreEmailsPanel.toggle($event)">
+                          <span class="font-bold">10+</span> Emails
+                          <!-- More   -->
+                        </div>
+                      </div>
+
+                    </div>
+                    <!-- <button pButton class="btn-overlay-primary"  (click)="dialogForAddMultipleEmails()">ok</button> -->
+                    <ng-contianer>
+                      <p-overlayPanel #moreEmailsPanel>
+                        <ng-template pTemplate="content">
+                          <div class="cmn-overlaypanel">
+                            <div class="features-class mb-1">
+                              <div class="panel-head bg-secondary-3 text-secondary-2 fs-12 p-2 paragraph-text-4">
+                                <div class="flex align-items-center justify-content-between">
+                                  Email Addresses 
+                                  
+                                </div>
+                              </div>
+                              <ul class="overflow-auto wrap-text-all wrap-one">
+          
+                                <li class="py-1 px-2">
+                                  <div class="flex align-items-center justify-content-between gap-1 w-full">
+                                    <div class="wrap-text-all wrap-one paragraph-text-4 ml-0 line-height-2 fs-12 features-list-detail">
+                                      <span pTooltip="sikandar.hayatatdatasoft.com.pk" tooltipPosition="top" tooltipStyleClass="cmn-tooltip">
+                                        sikandar.hayatatdatasoft.com.pk
+                                      </span>
+                                    </div>
+                                    <div class="copyIcon surface-200 border-circle py-0 px-1 cursor-pointer">
+                                      <i class="pi pi-copy text-sm text-secondary-2" pTooltip="Copy Email" tooltipPosition="top" tooltipStyleClass="cmn-tooltip"></i>
+                                    </div>                                                   
+                                  </div>
+                                </li>
+                                
+                              </ul>
+                            </div>
+                          </div>
+                        </ng-template>
+                      </p-overlayPanel>
+
+                    </ng-contianer>
+
+
+                    <p-overlayPanel #addEmailsOverlayPanel>
+                      
+                      <ng-template pTemplate="content">
+                        <div class="cmn-overlaypanel add-multiple-emails">
+                            <span class="cmn-dialog-title">Add Emails</span>
+                            
+                            <div class="flex py-3 justify-content-center">
+                              <div class="flex align-items-center flex-1">                              
+                                <div class="field mb-1 w-full">                                
+                                  <p-autoComplete formControlName="ccEmail" [suggestions]="userDropdownData"
+                                    (completeMethod)="CommonFilterForAutoComplete($event)" (onUnselect)="onUnselect()"
+                                    placeholder="{{'ADDCUSTLABLES.ENTERCCEMAIL' | translate}}" field="ccEmail"
+                                    (onBlur)="selectEmail($event, 'ccEmail')" [multiple]="true" (keyup)="emailKeyup($event)">
+                                    <ng-template let-selectedItem pTemplate="selectedItem">
+                                      <div class="content-box" [ngClass]="selectedItem.isError ? 'error': ''"
+                                        *ngIf="selectedItem.ccEmail !== null">
+                                        <span class="label-text">{{selectedItem.ccEmail}}</span>
+                                      </div>
+                                    </ng-template>
+                                  </p-autoComplete>                                
+                                </div>
+
+                                <div class="btn-container btn-end flex-nowrap w-auto">
+                                  <button pButton  type="button"  icon="pi pi-plus"
+                                    class="p-button-success p-mr-2 px-1 w-5 mx-1 cursor-pointer"></button>
+                                  <button 
+                                    icon="pi pi-minus" pButton  type="button" 
+                                    class="p-button-danger px-1 w-5 mx-1 cursor-pointer"></button>
+                                </div>
+                               
+                              </div>
+                            </div> 
+
+                          <span class="btn-container btn-end">                              
+                            <button pButton class="p-button-primary btn-100 mr-0" (click)="visible = false"  styleClass="p-button-text">
+                              Ok
+                            </button>                              
+                          </span>
+                        </div>
+                      </ng-template>
+                      
+                    </p-overlayPanel>
+
+                    <!-- <p-dialog header="Header" [(visible)]="visible" [modal]="false" [breakpoints]="{ '450px': '75vw' }" [style]="{ width: '25vw' }" 
+                        [draggable]="false" [resizable]="false">
+                        <ng-template pTemplate="header">
+                            <span class="cmn-dialog-title">
+                              Add Emails
+                            </span>
+                        </ng-template>
+                       
+                        <div class="flex py-2 justify-content-center">
+                         
+                          <div class="col-12">
+                            <div class="flex align-items-center">                              
+                              <div class="field mb-1 w-full">                                
+                                <p-autoComplete formControlName="ccEmail" [suggestions]="userDropdownData"
+                                  (completeMethod)="CommonFilterForAutoComplete($event)" (onUnselect)="onUnselect()"
+                                  placeholder="{{'ADDCUSTLABLES.ENTERCCEMAIL' | translate}}" field="ccEmail"
+                                  (onBlur)="selectEmail($event, 'ccEmail')" [multiple]="true" (keyup)="emailKeyup($event)">
+                                  <ng-template let-selectedItem pTemplate="selectedItem">
+                                    <div class="content-box" [ngClass]="selectedItem.isError ? 'error': ''"
+                                      *ngIf="selectedItem.ccEmail !== null">
+                                      <span class="label-text">{{selectedItem.ccEmail}}</span>
+                                    </div>
+                                  </ng-template>
+                                </p-autoComplete>                                
+                              </div>
+
+                                <div class="btn-container btn-end flex-nowrap w-auto">
+                                  <button pButton  type="button"  icon="pi pi-plus"
+                                    class="p-button-success p-mr-2 px-1 cursor-pointer"></button>
+                                  <button 
+                                    icon="pi pi-minus" pButton  type="button" 
+                                     class="p-button-danger px-1 cursor-pointer"></button>
+                                </div>
+
+                            </div>
+                          </div>                        
+                        </div>  
+                        
+                        <ng-template pTemplate="footer">
+                            <span class="btn-container btn-end">                              
+                              <button pButton class="p-button-primary btn-100 mr-0" (click)="visible = false"  styleClass="p-button-text">
+                                Ok
+                              </button>                              
+                            </span>
+                        </ng-template>
+                    </p-dialog> -->
+                    
+                    <!-- <p-autoComplete formControlName="ccEmail" [suggestions]="userDropdownData"
+                      (completeMethod)="CommonFilterForAutoComplete($event)" (onUnselect)="onUnselect()"
+                      placeholder="{{'ADDCUSTLABLES.ENTERCCEMAIL' | translate}}" field="ccEmail"
+                      (onBlur)="selectEmail($event, 'ccEmail')" [multiple]="true" (keyup)="emailKeyup($event)">
+                      <ng-template let-selectedItem pTemplate="selectedItem">
+                        <div class="content-box" [ngClass]="selectedItem.isError ? 'error': ''"
+                          *ngIf="selectedItem.ccEmail !== null">
+                          <span class="label-text">{{selectedItem.ccEmail}}</span>
+                        </div>
+                      </ng-template>
+                    </p-autoComplete> -->
+                    <cadency-validation-error [errorLabel]="'ADDCUSTLABLES.EMAIL'" [errorObj]="addCustomerForm?.get('email').errors"
+                      [showIf]="(((addCustomerForm?.get('email').hasError('required') && addCustomerForm?.get('email').touched) ||
+                      (addCustomerForm?.get('email').errors && addCustomerForm?.get('email').touched))  || isError) && !isEmailError">
+                    </cadency-validation-error>
+                  </div>
+                </div>

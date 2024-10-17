@@ -1,0 +1,1101 @@
+<div class="capture-inbox-container pages-box-cmn-20">
+
+  <div class="detailscreen-tabview left-aligned">
+
+    <div class="relative">
+
+      <div class="grid grid-nogutter">
+        <div class="col-12 lg:col-3">
+          <p-tabView [scrollable]="true" styleClass="capture-inbox-tabview-custom" (onChange)="changeTab($event)">
+            <p-tabPanel *ngFor="let type of statusType; let i = index">
+              <ng-template pTemplate="header">
+                <span>{{type?.name}} ({{type?.count}})</span>
+              </ng-template>
+              <div class="grid flex-row overflow-hidden">
+
+                <div class="col-12 flex min-h-full px-0">
+                  <div class="card noshadow white-shadow-box max-h-760">
+
+                    <div class="search-container">
+                      <div class="grid-header-section">
+                        <div class="grid-left-list w-full mr- 0 mb-2">
+                          <div class="grid-left-list-item w-full">
+                            <div class="input-container relative w-full">
+                              <i class="pi pi-search absolute rel-srch-i-position"></i>
+                              <input id="searchText" type="text" class="grid-input w-full shadow-1" pInputText
+                                placeholder="Search" />
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+
+                    <div class="list-container">
+
+                      <div class="items-list relative">
+
+                        <div class="select-all-items absolutee">
+                          <div class="grid grid-nogutter">
+                            <div class="col-12">
+                              <div class="flex flex-row align-items-center justify-space-between">
+                                <div class="flex-1">
+                                  <div class="flex">
+                                    <!-- <div class="custom-checkbox-wrap">
+                                      <div class="checkbox max-width-31 md-space">
+                                        <p-checkbox #selectAll binary="true" inputId="binary"
+                                          value="isChecked ? trueValue : falseValue"></p-checkbox>
+                                      </div>
+                                    </div> -->
+                                    <!-- <span class="ml-3">
+                                      Select all
+                                    </span> -->
+                                  </div>
+                                </div>
+                                <div class="filter-menu flex flex-row align-items-center">
+                                  <div class="filter-icon mx-2 px-1">
+                                    <svg-icon src="{{ filterIcon }}" class="svg-icon filter-btn"></svg-icon>
+                                  </div>
+
+                                  <div class="filter-menu-icon px-2">
+                                    <svg-icon (click)="unpublishedMenu.toggle($event);" src="{{ moreVertGridIcon }}"
+                                      class="svg-icon"></svg-icon>
+                                    <!-- <button pButton type="button"
+                                    class="more-vert-btn p-button-rounded p-button-sm bg-transparent p-2 outline-0 border-0" 
+                                    (click)="moreVertMenu.toggle($event);">
+                                    <svg-icon src="{{ moreVertGridIcon }}" class="svg-icon"></svg-icon>
+                                  </button> -->
+                                    <p-overlayPanel #unpublishedMenu [showTransitionOptions]="'0ms'"
+                                      [hideTransitionOptions]="'0ms'">
+                                      <ng-template pTemplate>
+                                        <div class="more-vert-dropdown-content cmn-overlaypanel half">
+                                          <ul class="more-vert-list">
+
+                                            <li class="more-vert-list-item" *ngFor="let item of unpublishedStatusData"
+                                              (click)="unpublishedMenu.hide();">
+                                              <a class="more-vert-list-item-link">{{item?.name}}</a>
+                                            </li>
+                                          </ul>
+                                        </div>
+                                      </ng-template>
+                                    </p-overlayPanel>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div class="checkbox-list-wrap flex flex-row">
+
+                          <!-- <div class="custom-checkbox-wrap">
+                            <div class="checkbox max-width-31 md-space">
+                             
+                              <p-checkbox #selectAll
+                                [(ngModel)]="selectedItem"
+                                 [binary]="true">
+                              </p-checkbox>
+                            </div>
+                          </div> -->
+
+                          <p-listbox [options]="captureInbox" [(ngModel)]="selectedItem" [metaKeySelection]="false"
+                            (onClick)="onClickListbox($event)" [checkbox]="false" [filter]="false" [multiple]="false"
+                            optionValue="id" [listStyle]="{'max-height':'250px'}" [style]="{'width':'15rem'}">
+
+                            <ng-template let-item pTemplate="item">
+
+                              <p-checkbox styleClass="absolute z-5" inputId="binary" [ngModel]="item.checked"
+                                value="item?.checked" (onChange)="itemClicked($event, item.id)" name="group1"
+                                inputId="billing" [binary]="true">
+                              </p-checkbox>
+
+                              <!-- <input type="checkbox" [checked]="item?.checked" [ngModel]="item.checked" (click)="itemClicked($event, item.id)"> -->
+
+
+                              <div class="country-item  pr-0 w-100">
+
+                                <!-- <div>{{country.name}}</div> -->
+                                <div class="grid w-100">
+                                  <div class="col-12">
+                                    <div class="flex align-items-start justify-content-between">
+                                      <div class="company-name text-primary-10 fs-14 font-semibold">
+                                        {{item?.customer?.customerDisplayName ? item?.customer?.customerDisplayName :
+                                        "-" }}</div>
+                                      <div class="company-name fs-14 text-primary-2 font-normal">{{((item?.amount || 0)
+                                        | customNumber:'1.d-d': item?.currency?.amountRounding)}}
+                                        {{item?.currency?.name}}
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div class="col-12">
+                                    <div class="flex align-items-end justify-content-between">
+                                      <div class="rel-dates">
+                                        <div class="inv-date text-secondary-2 fs-11 text-500 font-light">
+                                          Invoice Date: <span class="text-700 font-light">{{item.invoiceDate |
+                                            date}}</span>
+                                        </div>
+                                        <div class="due-date text-secondary-2 fs-11 text-500 font-light">
+                                          Due Date: <span class="text-700 font-light fs-11"> {{item.dueDate |
+                                            date}}</span>
+                                        </div>
+                                      </div>
+                                      <div class="rel-statuses">
+                                        <span class="font-12"
+                                          [ngClass]="item?.ocrStatusId === 1 ? 'text-primary-1' : item?.ocrStatusId === 2 ? 'text-primary-2' :
+                                       item?.ocrStatusId === 3 ? 'text-primary-3' : item?.ocrStatusId === 4 ? 'text-primary-6' :
+                                        item?.ocrStatusId === 5 ? 'text-primary-8' : 'text-primary-9'">{{item?.ocrStatus}}</span>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+
+                              </div>
+                            </ng-template>
+                          </p-listbox>
+                        </div>
+
+
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </p-tabPanel>
+          </p-tabView>
+        </div>
+        <div class="col-12 lg:col-9">
+
+          <div class="grid grid-nogutter flex-row overflow-hidden min-h-full">
+            <div class="col-12 lg:col-7">
+              <div class="custom-ocr-header-strip lg:border-noround flex align-items-center justify-content-end">
+                <div class="btn-container justify-content-end ">
+                  <button pButton type="button" class="p-button-primary btn-120" *ngIf="!toggleOcr"
+                    (click)="ocrToggleFn()">Add Document <span class="fs-20 mx-2">+</span> </button>
+                </div>
+              </div>
+              <div class="col-12 flex flex-col flex-grow min-h-full custom-padding-top">
+                <div class="card white-shadow-box shadow-2 flex flex-1 w-100 max-h-760 mr-3">
+
+                  <div class="grid flex-column flex-1 h-100">
+                    <div class="col-12" *ngIf="!toggleOcr">
+                      <div class="invoice-view-container">
+                        <img src="{{fileUrl}}" class="invoiceImageOcr svg-icon w-100" alt="invoice-preview" onerror="this.style.opacity='1'" /> 
+                        <!--invoiceImageOcr-->
+                      </div>
+                    </div>
+                    <div class="col-12 h-100" *ngIf="toggleOcr">
+                      <form [formGroup]="uploadDocumentForm" *ngIf="uploadDocumentForm">
+                        <div class="upload-comp-wrapper w-100 h-100">
+                          <p-fileUpload styleClass="ocr-fileupload" name="myfile[]" url="./upload.php" [multiple]="true"
+                            [accept]="allowedTypes" [auto]="true" (onSelect)="onSelectUpload($event)"
+                            (onRemove)="onRemove()" [maxFileSize]="maxSize">
+                            <ng-template pTemplate="toolbar">
+                              <div class="cancel-btn-wrap">
+                                <button pButton type="button"
+                                  class="p-element p-button-rounded p-button-secondary p-button-outlined p-button-sm p-component p-button-icon-only m-0"
+                                  icon="pi pi-times" iconPos="left" (click)="cancelDocument()"></button>
+                              </div>
+                            </ng-template>
+                            <!-- <ng-template let-file pTemplate="file">
+                              <div>Custom UI to display a file</div>
+                          </ng-template> -->
+                            <ng-template pTemplate="content" let-files>
+
+                              <div
+                                class="ocr-img-placeholder flex align-items-center justify-content-center h-100 flex-column">
+                                <div class="btn-container upload-file" *ngIf="files?.length > 0">
+                                  <button pButton type="button" class="p-button-primary btn-120"
+                                    (click)="uploadDocument()">Upload Document(s)</button>
+                                </div>
+                                <div class="icon-stack relative">
+                                  <img src="{{upload}}" class="invoiceImageOcr ocr-upload-icon svg-icon" />
+                                  <img src="{{uploadCopy}}" class="invoiceImageOcr ocr-upload-copy svg-icon" />
+
+                                </div>
+                                <div class="fs-18 font-semibold text-center">Drag and drop files or browse</div>
+                                <div class="fs- text-center">The followign file types are accpeted: .PDF, .JPG, .JPEG,
+                                  .PNG</div>
+                                <div class="fs- text-center">You can upload up to 20 files at once</div>
+                              </div>
+
+                            </ng-template>
+
+                          </p-fileUpload>
+
+                        </div>
+                      </form>
+                    </div>
+
+                  </div>
+                </div>
+              </div>
+
+            </div>
+            <!-- col-7 end -->
+
+            <div class="col-12 lg:col-5 ">
+              <div class="custom-ocr-header-strip lg:border-noround-left">
+                <div class="buttn-wrap flex align-items-center justify-content-end">
+                  <div class="btn-container icon-button btn-end">
+                    <!-- <span class="p-buttonset white-sapce-nowrap"> -->
+                    <!-- <button pButton type="button" class="mx-1" icon="pi pi-download" pTooltip="Save" tooltipPosition="top"></button> -->
+                    <!-- <button pButton type="button" class="mx-1" icon="pi pi-trash" pTooltip="Archive" tooltipPosition="top"></button> -->
+                    <!-- <button pButton type="button" class="mx-1" icon="pi pi-times" pTooltip="Delete" tooltipPosition="top"></button> -->
+                    <span class="p-icon-button overlay-primary-13 bg-tranparent"
+                      *ngIf="selectedData?.length > 0">{{selectedData?.length}} item(s) selected</span>
+                    <button pButton type="button"
+                      class="p-icon-button overlay-primary-13 p-button bg-tranparent download-icon"
+                      styleClass="cmn-tooltip" pTooltip="Save" tooltipPosition="top" (click)="downloadDocument()">
+                      <svg-icon src="{{ downloadIcon }}" class="svg-icon"></svg-icon>
+                    </button>
+                    <button pButton type="button"
+                      class="p-icon-button overlay-primary-6 p-button bg-tranparent archive-icon"
+                      (click)="archiveItem()" styleClass="cmn-tooltip" pTooltip="Archive" tooltipPosition="top">
+                      <svg-icon src="{{ archiveIcon }}" class="svg-icon"></svg-icon>
+                    </button>
+                    <button pButton type="button"
+                      class="p-icon-button overlay-primary-8 p-button bg-tranparent delete-icon" (click)="removeItem()"
+                      styleClass="cmn-tooltip" pTooltip="Delete" tooltipPosition="top">
+                      <svg-icon src="{{ deleteAction }}" class="svg-icon"></svg-icon>
+                    </button>
+                    <!-- </span> -->
+                  </div>
+                </div>
+              </div>
+              <div class="grid custom-padding-top ">
+                <div class="col-12 flex min-h-full">
+                  <div class="card white-shadow-box noshadow bg-secondary-8 p-3 w-100 max-h-760 border-none">
+                    <div class="inv-fact-container">
+                      <form [formGroup]="addCaptureInboxForm" *ngIf="addCaptureInboxForm">
+                        <div class=" grid align-items-center justify-content-between my-2">
+
+                          <div class="col-12">
+                            <div class="flex flex-row wrap align-items-center justify-space-between mb-3">
+                              <div class="drop-down-wrap flex-1">
+                                <div class="field flex flex-row align-items-center justify-space-between mb-0">
+                                  <label class="mb-0 font-semibold w-4">Customer name:</label>
+                                  <!-- <p-dropdown styleClass="mx-3 flex-1 w-100" id="customername" [options]="customerData" optionLabel="customerDisplayName" [filter]="false" filterBy="customerDisplayName"
+                                  [resetFilterOnHide]="true" placeholder="Customer name">
+                                  <ng-template let-country pTemplate="item">
+                                    <div class="country-item">
+                                      <div class="inline-flex">
+                                        {{country.customerDisplayName}}</div>
+                                    </div>
+                                  </ng-template>
+                                </p-dropdown> -->
+                                  <div class="field-wrap w-6">
+                                    <!-- <p-dropdown styleClass="mx-0 flex-1 w-100" [options]="customerData" formControlName="customerid" optionLabel="customerDisplayName" [filter]="true"
+                                    filterBy="name" [showClear]="false" placeholder="Select a Customer">
+                                    <ng-template pTemplate="selectedItem">
+                                      <div class="country-item country-item-value">
+                                        <div>{{selectedCountry.customerDisplayName}}</div>
+                                      </div>
+                                    </ng-template>
+                                    <ng-template let-country pTemplate="item">
+                                      <div class="country-item">
+                                        <div>{{country.customerDisplayName}}</div>
+                                      </div>
+                                    </ng-template>
+                                  </p-dropdown> -->
+                                    <p-dropdown class="currencyDropDown" id="currency" [options]="customerData"
+                                      optionLabel="customerDisplayName" optionValue="id" [filter]="true"
+                                      [showClear]="addCaptureInboxForm?.get('customerid')?.value ? true : false"
+                                      placeholder="{{'FORMSFIELD.SELECTCUSTOMER' | translate}}"
+                                      formControlName="customerid" [resetFilterOnHide]="true"
+                                      [resetFilterOnHide]="true">
+                                      <!-- <ng-template pTemplate="selectedItem">
+                                        <div>
+                                          {{addCaptureInboxForm?.get('customerid')?.value?.customerDisplayName}}
+                                        </div>
+                                      </ng-template> -->
+                                      <ng-template let-customer pTemplate="item">
+                                        <div class="inline-flex">{{customer?.customerDisplayName ?
+                                          customer?.customerDisplayName :
+                                          customer?.name}}</div>
+                                      </ng-template>
+                                    </p-dropdown>
+                                    <cadency-validation-error [errorLabel]="'Customer'"
+                                      [errorObj]="addCaptureInboxForm?.get('customerid').errors"
+                                      [showIf]="(addCaptureInboxForm?.get('customerid').hasError('required') && addCaptureInboxForm?.get('customerid').touched) || isError">
+                                    </cadency-validation-error>
+                                  </div>
+                                </div>
+                              </div>
+                              <svg-icon (click)="cust.toggle($event);" src="{{ settingsIcon }}"
+                                class="settingsIcon svg-icon cursor-pointer"></svg-icon>
+                              <p-overlayPanel #cust>
+                                <ng-template pTemplate>
+                                  <div class="more-vert-dropdown-content cmn-overlaypanel half">
+                                    <ul class="more-vert-list">
+                                      <li class="more-vert-list-item" *ngFor="let item of extractedDataList"
+                                        (click)="settingClicked(item?.Value, item?.Key, 'Customer');cust.hide();">
+                                        <a class="more-vert-list-item-link">{{item?.Key}}</a>
+                                      </li>
+                                    </ul>
+                                  </div>
+                                </ng-template>
+                              </p-overlayPanel>
+                            </div>
+                          </div>
+
+                          <div class="col-12">
+                            <div class="flex flex-row wrap align-items-center justify-space-between mb-3">
+                              <div class="drop-down-wrap flex-1">
+                                <div class="field flex flex-row align-items-center justify-space-between mb-0">
+                                  <label class="mb-0 font-semibold w-4">Invoice #:</label>
+                                  <!-- <p-dropdown styleClass="mx-3 flex-1" id="customername" optionLabel="customerName" [filter]="false" filterBy="name"
+                                  [resetFilterOnHide]="true" placeholder="Hayat Enterprises">
+                                </p-dropdown> -->
+                                  <div class="field-wrap w-6">
+                                    <input styleClass="mx-0 flex-1" id="CustomerName" placeholder="Invoice #"
+                                      type="text" formControlName="invoiceNumber" aria-describedby="CustomerName-help"
+                                      pInputText />
+                                      <cadency-validation-error [errorLabel]="'Invoice Number'"
+                                      [errorObj]="addCaptureInboxForm?.get('invoiceNumber').errors"
+                                      [showIf]="(addCaptureInboxForm?.get('invoiceNumber').hasError('required') && addCaptureInboxForm?.get('invoiceNumber').touched) || isError">
+                                    </cadency-validation-error>
+                                  </div>
+                                </div>
+                              </div>
+                              <svg-icon (click)="inv.toggle($event);" src="{{ settingsIcon }}"
+                                class="settingsIcon svg-icon cursor-pointer"></svg-icon>
+                              <p-overlayPanel #inv [showTransitionOptions]="'0ms'" [hideTransitionOptions]="'0ms'">
+                                <ng-template pTemplate>
+                                  <div class="more-vert-dropdown-content cmn-overlaypanel half">
+                                    <ul class="more-vert-list">
+
+                                      <li class="more-vert-list-item" *ngFor="let item of extractedDataList"
+                                        (click)="settingClicked(item?.Value, item?.Key, 'Invoice');inv.hide();">
+                                        <a class="more-vert-list-item-link">{{item?.Key}}</a>
+                                      </li>
+
+                                    </ul>
+                                  </div>
+                                </ng-template>
+                              </p-overlayPanel>
+                            </div>
+                          </div>
+
+                          <div class="col-12">
+                            <div class="flex flex-row wrap align-items-center justify-space-between mb-3">
+                              <div class="drop-down-wrap flex-1">
+                                <div class="field flex flex-row align-items-center justify-space-between mb-0">
+
+                                  <label class="mb-0 font-semibold w-4">Currency:</label>
+                                  <!-- <p-dropdown styleClass="mx-3 flex-1 w-100 w-full" id="customername" optionLabel="customerName" [filter]="false" filterBy="name"
+                                  [resetFilterOnHide]="true" placeholder="Currency">
+                                </p-dropdown> -->
+                                  <div class="field-wrap w-6">
+                                    <!-- <p-dropdown styleClass="mx-0 flex-1 w-100 w-full" id="currencyId"
+                                      [options]="currencyDropdownData" optionLabel="name" [filter]="true"
+                                      filterBy="name" [showClear]="true"
+                                      placeholder="{{ 'ADDCUSTLABLES.SELECTCURRENCY' | translate }}"
+                                      formControlName="currencyId" [resetFilterOnHide]="true">
+                                      <ng-template let-country pTemplate="item">
+                                        <div class="country-item">
+                                          <div class="inline-flex">
+                                            {{country.name}}
+                                          </div>
+                                        </div>
+                                      </ng-template>
+                                    </p-dropdown> -->
+
+                                    <p-dropdown class="currencyDropDown" id="currency" [options]="currencyData"
+                                      optionLabel="name" optionValue="id" [filter]="true"
+                                      [showClear]="addCaptureInboxForm?.get('currencyId')?.value ? true : false"
+                                      placeholder="{{'FORMSFIELD.SELECTCURRENCY' | translate}}"
+                                      formControlName="currencyId" [resetFilterOnHide]="true"
+                                      [resetFilterOnHide]="true">
+                                      <ng-template pTemplate="selectedItem" let-currency>
+                                        <div>
+                                          <span
+                                            class="filter-header-title fi fi-{{currency?.iso2 | lowercase }}"></span>
+                                          {{currency?.name}}
+                                        </div>
+                                      </ng-template>
+                                      <ng-template let-currency pTemplate="item">
+                                        <div class="country-item">
+                                          <div class="inline-flex"><span
+                                              class="fi fi-{{currency?.iso2 | lowercase }} mr-2"></span>{{currency?.name}}
+                                          </div>
+                                        </div>
+                                      </ng-template>
+                                    </p-dropdown>
+                                    <cadency-validation-error [errorLabel]="'Currency'"
+                                      [errorObj]="addCaptureInboxForm?.get('currencyId').errors"
+                                      [showIf]="(addCaptureInboxForm?.get('currencyId').hasError('required') && addCaptureInboxForm?.get('currencyId').touched) || isError">
+                                    </cadency-validation-error>
+                                  </div>
+                                </div>
+                              </div>
+
+                              <svg-icon (click)="cur.toggle($event);" src="{{ settingsIcon }}"
+                                class="settingsIcon svg-icon cursor-pointer"></svg-icon>
+
+                              <p-overlayPanel #cur [showTransitionOptions]="'0ms'" [hideTransitionOptions]="'0ms'">
+                                <ng-template pTemplate>
+                                  <div class="more-vert-dropdown-content cmn-overlaypanel half">
+                                    <ul class="more-vert-list">
+
+                                      <li class="more-vert-list-item" *ngFor="let item of extractedDataList"
+                                        (click)="settingClicked(item?.Value, item?.Key, 'Currency');cur.hide()">
+                                        <a class="more-vert-list-item-link">{{item?.Key}}</a>
+                                      </li>
+
+                                    </ul>
+                                  </div>
+                                </ng-template>
+                              </p-overlayPanel>
+                            </div>
+
+                          </div>
+
+                          <div class="col-12">
+                            <div class="flex flex-row wrap align-items-center justify-space-between mb-3">
+                              <div class="drop-down-wrap flex-1">
+                                <div class="field flex flex-row align-items-center justify-space-between mb-0">
+
+                                  <label class="mb-0 font-semibold w-4">Amount:</label>
+                                  <!-- <p-dropdown styleClass="mx-3 flex-1" id="customername" optionLabel="customerName" [filter]="false" filterBy="name"
+                                  [resetFilterOnHide]="true" placeholder="Hayat Enterprises">
+                                </p-dropdown> -->
+                                  <div class="field-wrap w-6">
+                                    <!-- <input class="mx-0 flex-1" id="CustomerName" placeholder="Amount" type="text"
+                                      formControlName="amount" aria-describedby="CustomerName-help" pInputText /> -->
+                                    <p-inputNumber pInputText class="mx-0 flex-1" styleClass="pNumber" cadencyCurrency
+                                      type="text" placeholder="Amount" formControlName="amount" mode="decimal"
+                                      [minFractionDigits]="addCaptureInboxForm?.get('currencyId')?.value ? addCaptureInboxForm?.get('currencyId')?.value?.amountRounding : decimalPlaces"
+                                      min="1"
+                                      [maxFractionDigits]="addCaptureInboxForm?.get('currencyId')?.value ? addCaptureInboxForm?.get('currencyId')?.value?.amountRounding: clientConfig?.DEFAULT_MAX_DECIMAL_PLACES">
+                                    </p-inputNumber>
+                                    <cadency-validation-error [errorLabel]="'Amount'"
+                                      [errorObj]="addCaptureInboxForm?.get('amount').errors"
+                                      [showIf]="(addCaptureInboxForm?.get('amount').hasError('required') && addCaptureInboxForm?.get('amount').touched) || isError">
+                                    </cadency-validation-error>
+                                  </div>
+
+                                </div>
+                              </div>
+
+                              <svg-icon (click)="amt.toggle($event);" src="{{ settingsIcon }}"
+                                class="settingsIcon svg-icon cursor-pointer"></svg-icon>
+
+                              <p-overlayPanel #amt [showTransitionOptions]="'0ms'" [hideTransitionOptions]="'0ms'">
+                                <ng-template pTemplate>
+                                  <div class="more-vert-dropdown-content cmn-overlaypanel half">
+                                    <ul class="more-vert-list">
+
+                                      <li class="more-vert-list-item" *ngFor="let item of extractedDataList"
+                                        (click)="settingClicked(item?.Value, item?.Key, 'Amount');amt.hide();">
+                                        <a class="more-vert-list-item-link">{{item?.Key}}</a>
+                                      </li>
+
+                                    </ul>
+                                  </div>
+                                </ng-template>
+                              </p-overlayPanel>
+                            </div>
+
+                          </div>
+
+                          <div class="col-12">
+                            <div class="flex flex-row wrap align-items-center justify-space-between mb-3">
+                              <div class="drop-down-wrap flex-1">
+                                <div class="field flex flex-row align-items-center justify-space-between mb-0">
+
+                                  <label class="mb-0 font-semibold w-4">Invoice Date:</label>
+                                  <!-- <p-dropdown styleClass="mx-3 flex-1 w-100 w-full" id="customername"
+                                    formControlName="invoiceDate" optionLabel="customerName" [filter]="false"
+                                    filterBy="name" [resetFilterOnHide]="true" placeholder="Invoice Date">
+                                  </p-dropdown> -->
+                                  <div class="field-wrap w-6">
+                                    <p-calendar formControlName="invoiceDate" [showIcon]="true" id="invoiceDate"
+                                      [minDate]="today" placeholder="Please select Invoice Date"></p-calendar>
+                                  </div>
+
+                                </div>
+                              </div>
+
+                              <svg-icon (click)="invDate.toggle($event);" src="{{ settingsIcon }}"
+                                class="settingsIcon svg-icon cursor-pointer"></svg-icon>
+
+                              <p-overlayPanel #invDate [showTransitionOptions]="'0ms'" [hideTransitionOptions]="'0ms'">
+                                <ng-template pTemplate>
+                                  <div class="more-vert-dropdown-content cmn-overlaypanel half">
+                                    <ul class="more-vert-list">
+
+                                      <li class="more-vert-list-item" *ngFor="let item of extractedDataList"
+                                        (click)="settingClicked(item?.Value, item?.Key, 'Invoice Date');invDate.hide();">
+                                        <a class="more-vert-list-item-link">{{item?.Key}}</a>
+                                      </li>
+
+                                    </ul>
+                                  </div>
+                                </ng-template>
+                              </p-overlayPanel>
+                            </div>
+
+                          </div>
+
+                          <div class="col-12">
+                            <div class="flex flex-row wrap align-items-center justify-space-between mb-3">
+                              <div class="drop-down-wrap flex-1">
+                                <div class="field flex flex-row align-items-center justify-space-between mb-0">
+
+                                  <label class="mb-0 font-semibold w-4">Due Date:</label>
+                                  <!-- <p-dropdown styleClass="mx-3 flex-1 w-100 w-full" id="customername" formControlName="dueDate"
+                                  optionLabel="customerName" [filter]="false" filterBy="name" [resetFilterOnHide]="true"
+                                  placeholder="Due Date">
+                                </p-dropdown> -->
+                                  <div class="field-wrap w-6">
+                                    <p-calendar formControlName="dueDate" [showIcon]="true" id="dueDate"
+                                      [minDate]="today" placeholder="Please select Due Date"></p-calendar>
+                                  </div>
+
+                                </div>
+                              </div>
+
+                              <svg-icon (click)="dueDate.toggle($event);" src="{{ settingsIcon }}"
+                                class="settingsIcon svg-icon cursor-pointer"></svg-icon>
+
+                              <p-overlayPanel #dueDate [showTransitionOptions]="'0ms'" [hideTransitionOptions]="'0ms'">
+                                <ng-template pTemplate>
+                                  <div class="more-vert-dropdown-content cmn-overlaypanel half">
+                                    <ul class="more-vert-list">
+
+                                      <li class="more-vert-list-item" *ngFor="let item of extractedDataList"
+                                        (click)="settingClicked(item?.Value, item?.Key, 'Due Date');dueDate.hide();">
+                                        <a class="more-vert-list-item-link">{{item?.Key}}</a>
+                                      </li>
+
+                                    </ul>
+                                  </div>
+                                </ng-template>
+                              </p-overlayPanel>
+                            </div>
+
+                          </div>
+
+                          <div class="col-12">
+                            <div class="flex flex-row wrap align-items-center justify-space-between mb-3">
+                              <div class="drop-down-wrap flex-1">
+                                <div class="field flex flex-row align-items-center justify-space-between mb-0">
+
+                                  <label class="mb-0 font-semibold w-4">Customer Message:</label>
+                                  <!-- <p-dropdown styleClass="mx-3 flex-1" id="customername" optionLabel="customerName" [filter]="false" filterBy="name"
+                                  [resetFilterOnHide]="true" placeholder="Hayat Enterprises">
+                                </p-dropdown> -->
+                                  <!-- <input styleClass="mx-3 flex-1" id="CustomerName" placeholder="Customer Message"
+                                    formControlName="customerMessage" type="text" aria-describedby="CustomerName-help"
+                                    pInputText /> -->
+                                  <!-- <angular-editor #TemplateEditor [config]="config" formControlName="customerMessage"
+                                    class="templateeditor">
+                                  </angular-editor> -->
+                                  <div class="field-wrap w-6 textarea-wrap">
+                                    <textarea id="float-input" placeholder="Message" [rows]="5" [cols]="30"
+                                      pInputTextarea autoResize="autoResize"
+                                      formControlName="customerMessage"></textarea>
+                                  </div>
+
+                                </div>
+                              </div>
+
+                              <svg-icon (click)="custMsg.toggle($event);" src="{{ settingsIcon }}"
+                                class="settingsIcon svg-icon cursor-pointer"></svg-icon>
+
+                              <p-overlayPanel #custMsg [showTransitionOptions]="'0ms'" [hideTransitionOptions]="'0ms'">
+                                <ng-template pTemplate>
+                                  <div class="more-vert-dropdown-content cmn-overlaypanel half">
+                                    <ul class="more-vert-list">
+
+                                      <li class="more-vert-list-item" *ngFor="let item of extractedDataList"
+                                        (click)="settingClicked(item?.Value, item?.Key, 'Customer Message');custMsg.hide();">
+                                        <a class="more-vert-list-item-link">{{item?.Key}}</a>
+                                      </li>
+
+                                    </ul>
+                                  </div>
+                                </ng-template>
+                              </p-overlayPanel>
+                            </div>
+
+                          </div>
+
+                        </div>
+
+                        <div class="btn-container justify-content-end ">
+                          <button pButton type="button" class="p-button-primary btn-120" (click)="selectedData?.length > 0 ? publishCaptureInbox() : saveCaptureInbox()">{{selectedData?.length > 0 ? 'Publish': 'Save'}}</button>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- col-5 ends -->
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<cadency-alert *ngIf="visibleDeleteAlert" (removeData)="isRemoveCaptureInbox($event)"></cadency-alert>
+<cadency-alert *ngIf="visibleGeneralAlert" (isAlertData)="isUpdateArchive($event)" [alertType]="alertType">
+
+
+
+
+
+
+CSS FOR OCR 2
+==============
+
+@import "src/styles.scss";
+
+.capture-inbox-container {
+  .capture-inbox-tabview-custom {
+    &.p-tabview.p-component {
+      // color:blue;
+      .p-tabview-nav-container {
+        .p-tabview-nav-content {
+          background: $secondary-27;
+          padding: 10px 0 15px 10px;
+          border-radius: 8px;
+          min-height: 66px;
+
+          border-top-right-radius: 0;
+          border-bottom-right-radius: 0;
+
+          ul {
+            background-color: transparent;
+            border: 0;
+
+            &.p-tabview-nav {
+              // align-items: end !important;
+
+              li {
+                &:nth-child(3) {
+                  a.p-tabview-nav-link {
+                    padding: 0px 30px;
+                    display: inline-flex;
+                    align-self: end;
+                  }
+                }
+
+                &:not(.p-highlight) {
+                  a {
+                    &.p-tabview-nav-link {
+                      border: solid transparent;
+                      // border: solid #dee2e6;
+                      border-width: 0 0 2px 0;
+                    }
+                  }
+
+                  &.p-tabview-ink-bar {
+                    visibility: hidden;
+                  }
+                }
+
+                a {
+                  &.p-tabview-nav-link {
+                    padding: 10px 30px;
+                    background: transparent;
+                    // border: solid #dee2e6;
+                    // border-width: 0 0 2px 0;
+                  }
+                }
+
+                &.p-tabview-ink-bar {
+                  visibility: hidden;
+                }
+              }
+            }
+          }
+        }
+      }
+
+      .p-tabview-panels {
+        p-tabpanel {
+          &.p-element {
+            .search-container {
+              .grid-header-section {
+                .grid-left-list {
+                  margin-right: 0 !important;
+
+                  .input-container {
+                    .rel-srch-i-position {
+                      color: $secondary-2;
+                      top: 32%;
+                      left: 7%;
+                    }
+
+                    .rel-srch-i-position + input.p-inputtext {
+                      padding-left: 50px;
+                    }
+                  }
+                }
+              }
+            }
+
+            .list-container {
+              .isDisabled {
+                pointer-events: none;
+                opacity: 0.5;
+              }
+
+              .items-list {
+                .select-all-items {
+                  top: 8px;
+                  left: 50px;
+                  // width: calc(100% - 60px);
+                  padding: 10px 5px;
+                }
+
+                .filter-chips-wrap{
+                    
+                    max-height: 115px;
+                    overflow-y: auto;
+                    @include scroll-style;
+
+                    p-chip.p-element {
+                        .custom-chip {
+                            // border: 1px solid red !important;
+                            margin-bottom: 5px;
+                            padding: 0 0.5rem !important;
+                            &:not(last-child){
+                                margin-right: 5px;
+                            }
+                            .p-chip-icon, .p-chip-text , .p-chip-remove-icon{
+                                font-size:$fs-11
+                            }
+                            .p-chip-icon{
+                                margin-right:0.25rem !important;
+                            }
+                            .p-chip-remove-icon{
+                                margin-left:0.25rem !important;
+                            }
+                           
+                        }
+                    }
+                }
+
+                p-listbox.p-element {
+                  .p-listbox.p-component {
+                    width: 100% !important;
+                    margin: 0;
+                    margin: 0;
+                    border-radius: 0;
+                    border: 0;
+                    background: #ffffff;
+                    // color: #495057;
+
+                    .p-listbox-header {
+                      padding: 0.5rem 1rem;
+                      border-bottom: 0px;
+                      color: #343a40;
+                      margin: 0;
+                      border-top-right-radius: 0;
+                      border-top-left-radius: 0;
+
+                      .custom-checkbox-wrap {
+                        // height:80px;
+                        // display: flex;
+                        // align-items: center;
+                        // justify-content: center;
+                      }
+                    }
+
+                    .p-listbox-list-wrapper {
+                      @include scroll_style();
+                      max-height: 100% !important;
+                      background-color: transparent;
+                      overflow: auto;
+                      height: 480px;
+                      margin-bottom: 10px;
+                      @include media-breakpoint-down(xxl) {
+                        height: 320px;
+                      }
+
+                      ul {
+                        padding-top: 0;
+
+                        li:not(.p-highlight) {
+                          background-color: transparent !important;
+                        }
+
+                        li {
+                          &.p-listbox-item {
+                            padding: 0.5rem 0.5rem !important;
+                            border-left: 5px solid transparent;
+                            position: relative;
+
+                            // input[type="checkbox"]{
+                            //     border:1px solid red ;
+                            //     position:absolute;
+                            //     z-index: 5;
+                            // }
+                            // .p-checkbox{
+                            //         border:1px solid red ;
+                            //     position:absolute;
+                            //     z-index: 5;
+                            // }
+
+                            .country-item {
+                              padding-left: 35px;
+                            }
+
+                            &:focus {
+                              box-shadow: none !important;
+                            }
+
+                            &.p-highlight {
+                              background-color: $secondary-8 !important;
+                              border-left: 5px solid $primary-1;
+                            }
+
+                            &:hover {
+                              background-color: $secondary-8 !important;
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .invoice-view-container {
+    img.invoiceImageOcr {
+      font-size: 10px;
+      font-weight: 300;
+      line-height: 2;
+      text-align: center;
+
+      width: 100%;
+      height: auto;
+      display: block;
+      position: relative;
+
+
+      &.error-img{
+        &::before{
+            content: " ";
+            display: block;
+          
+            position: absolute;
+            top: -10px;
+            left: 0;
+            height: calc(100% + 10px);
+            width: 100%;
+            background-color: rgb(230, 230, 230);
+            border: 2px dotted rgb(200, 200, 200);
+            border-radius: 5px;
+            
+          }
+          &::after {
+            // content: "\f1c5"" " attr(alt);
+            content: "\f1c5"" " "We're sorry, the image below is broken :(";
+            
+            font-size: 16px;
+            color: rgb(100, 100, 100);
+    
+            display: block;
+            position: absolute;
+            z-index: 2;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #fff;
+          }
+      }
+
+     
+    }
+
+    
+  }
+
+  .upload-comp-wrapper {
+    height: 100%;
+
+    // border: 1px solid blue;
+    .ocr-fileupload {
+      height: 100%;
+      // border: 1px solid orange;
+      display: block;
+      padding: 10px;
+
+      // &p-fileupload.p-element {}
+
+      .p-fileupload-buttonbar {
+        background-color: transparent;
+        text-align: left;
+        display: inline-flex;
+        width: 100%;
+        position: relative;
+        padding-top: 0 !important;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        border: 0;
+
+        .cancel-btn-wrap {
+          .p-button {
+            width: 10px !important;
+            height: 10px;
+            padding: 15px !important;
+          }
+        }
+
+        .p-fileupload-choose {
+          text-align: left;
+          flex-grow: 0;
+          width: max-content;
+          margin: 10px 0;
+        }
+      }
+
+      .p-fileupload-content {
+        border: 0;
+        margin-bottom: 0px;
+        height: 90%;
+
+        .p-fileupload-files {
+          height: 480px;
+          overflow-y: auto;
+          @include scroll-style;
+
+          @include media-breakpoint-down(xxl) {
+            height: 320px;
+          }
+
+          .p-fileupload-row{
+
+            .p-fileupload-filename{
+                font-size:$fs-12;
+                & ~ div{
+                    font-size:$fs-12;
+                    button.p-button.p-button-icon-only{
+                        width:25px;
+                        height:20px;
+                    }
+                }
+            }
+          }
+        }
+
+        .ocr-img-placeholder {
+          .upload-file {
+            margin: 20px auto;
+            text-align: center;
+
+            .p-button {
+              margin: 0 auto;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .icon-stack {
+    width: 200px;
+    height: 150px;
+    text-align: center;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .ocr-upload-copy {
+      width: 91px;
+    }
+
+    .ocr-upload-icon {
+      width: 123px;
+    }
+  }
+
+  .inv-fact-container {
+    // .field {
+    label {
+      font-size: $fs-13 !important;
+      white-space: nowrap;
+    }
+
+    // }
+
+    .settings-wrap {
+        width: 30px;
+        height: 30px;
+        display: inline-flex;
+        // border: 1px solid red;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        .settingsIcon {
+            width: 20px;
+            position: absolute;
+            left: -45px;
+          }
+    }
+
+   
+
+   
+  }
+
+  .custom-ocr-header-strip {
+    background: $secondary-27;
+    padding: 10px 25px 15px 10px;
+    border-radius: 8px;
+    min-height: 66px;
+  }
+
+  .custom-padding-top {
+    padding-top: 1.25rem;
+  }
+
+  .ocr-panels-height {
+    max-height: 700px;
+    height: 700px;
+    min-height: 0px;
+    overflow: hidden;
+
+    @include media-breakpoint-down(xxl) {
+      max-height: 520px;
+      height: 520px;
+    }
+  }
+
+  .max-h-760 {
+    max-height: 760px;
+    height: 760px;
+    min-height: 0px;
+    overflow: hidden;
+  }
+
+  .buttn-wrap {
+    .btn-container .download-icon svg-icon.svg-icon svg g path {
+      fill: #09a191;
+    }
+  }
+
+  .disable-btn-opacity {
+    opacity: 0.5;
+  }
+
+  
+}

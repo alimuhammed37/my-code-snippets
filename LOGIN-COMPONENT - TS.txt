@@ -1,0 +1,279 @@
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
+import { AppConstants, imagePath, logoPath } from '@app/app-constants';
+import { TranslateService } from '@ngx-translate/core';
+import { MessageService } from '@app/shared/services/message.service';
+import { ConfigService } from '@shared/services/config.service';
+import { AuthenticationService } from '../authentication.service';
+import { StorageService } from '@app/shared/services/storage.service';
+import { GeneralService } from '@app/shared/services/general.service';
+import { BehaviorSubject } from 'rxjs';
+import { ValidatorsComponent } from '@shared/validators/validators/validators.component';
+import { NgxUiLoaderService } from 'ngx-ui-loader';
+import { Title } from '@angular/platform-browser';
+
+@Component({
+  selector: 'cadency-login',
+  templateUrl: './login.component.html',
+  styleUrls: ['./login.component.scss'],
+  encapsulation: ViewEncapsulation.None
+
+})
+export class LoginComponent implements OnInit {
+  // token$ = new BehaviorSubject<any>(null);
+  LoginForm: UntypedFormGroup;
+  CreatePasswordForm: UntypedFormGroup;
+  submitted: boolean = false;
+  logoImage: string = this.images.logoImage;
+  loginIntroImage: string = this.images.loginIntroImage;
+  customMessages: any;
+
+  LoginDataHideShow: boolean = true;
+  ForgotDataHideShow: boolean = false;
+  TwoFactorAuthDataHideShow: boolean = false;
+  CreatePasswordHideShow: boolean = false;
+  hidePassword: boolean = true;
+  hideNewPassword: boolean = true;
+  hideConfirmPassword: boolean = true;
+  hidePasswordLogin: boolean = true;
+  token: any;
+  isResetGoogleAuthQR: boolean = false;
+  isError: boolean = false;
+  isUpper: boolean = false;
+  isLower: boolean = false;
+  isNumeric: boolean = false;
+  isCharacter: boolean = false;
+  clientConfig: any;
+  brandingLogo: String;
+  loaderConfig = AppConstants.UX_LOADER;
+  favIcon: HTMLLinkElement = document.querySelector('#appIcon');
+
+  constructor(
+    private images: imagePath,
+    private logos: logoPath,
+    private formBuilder: UntypedFormBuilder,
+    private translateService: TranslateService,
+    private router: Router,
+    private messageService: MessageService,
+    private configService: ConfigService,
+    private authenticationService: AuthenticationService,
+    private storageService: StorageService, private generalService: GeneralService,
+    private ngxLoader: NgxUiLoaderService, private title: Title
+  ) {
+    this.customMessages = this.configService?.messages;
+    this.clientConfig = this.configService?.clientConfig;
+    this.ngxLoader.startLoader('login');
+  }
+
+  ngOnInit(): void {
+    this.generalService.isLogedOut = true;
+    // const url = 'https://www.libertyhomefurnishing.com/main'
+    this.ngxLoader.startLoader('loginBrandingLogo');
+    this.generalService.getBrandingLogo(window.location.origin)?.subscribe((res: any) => {
+      this.ngxLoader.stopLoader('loginBrandingLogo');
+      this.ngxLoader.stopLoader('login');
+      this.brandingLogo = res?.data?.brandingLogo ? res?.data?.brandingLogo : this.logoImage;
+      const theme = res?.data?.themeName ? res?.data?.themeName : 'default'
+      this.generalService.setTheme(theme, true);
+      if (res?.data?.title) {
+        this.title.setTitle(res?.data?.title); 
+      }
+      if (res?.data?.favIcon) {
+        this.favIcon.href = res?.data?.favIcon;
+      }
+    }, (error: any) => {
+      this.brandingLogo = this.logoImage;
+      this.generalService.setTheme('default', true);
+      this.ngxLoader.stopLoader('loginBrandingLogo');
+      this.ngxLoader.stopLoader('login');
+    });
+    this.initLoginform();
+  }
+
+  initLoginform() {
+    if (this.storageService.getEncryptLs('c_tk') !== null) {
+      this.storageService.removeLsData('s-l');
+      this.storageService.removeLsData('c_tk');
+      this.storageService.removeLsData('p_l');
+      this.storageService.removeLsData('u_p');
+      this.storageService.removeLsData('ng2Idle.main.expiry');
+      this.storageService.removeLsData('ng2Idle.main.idling');
+      // this.ngxLoader.stopAll();
+    }
+    this.LoginFormInit();
+  }
+  LoginFormInit() {
+    this.LoginForm = this.formBuilder.group({
+      username: ['', [Validators.required]],
+      password: ['', Validators.required]
+    });
+  }
+
+  CreatePasswordInit() {
+    this.CreatePasswordForm = this.formBuilder.group({
+      username: ['', [Validators.required]],
+      oldPassword: [''],
+      password: ['', [Validators.required, Validators.pattern('(?=[^A-Z]*[A-Z])(?=[^a-z]*[a-z])(?=[^0-9]*[0-9]).{8,}')]],
+      confirmPassword: ['', Validators.required]
+    },
+      {
+        validators: ValidatorsComponent.matchPassword('password', 'confirmPassword')
+      }
+    );
+    this.CreatePasswordForm.get('username')?.disable();
+  }
+
+  get f() { return this.LoginForm.controls; }
+  get g() { return this.CreatePasswordForm.controls; }
+
+  onLogin() {
+    this.submitted = true;
+    if (this.LoginForm.invalid) {
+      this.messageService.showError(this.customMessages.FILL_REQ_FIELDS);
+      return;
+    }
+    else {
+      this.authenticationService.login(this.LoginForm.value).subscribe((res: any) => {
+        if (res?.success === AppConstants.SUCCESS) {
+          if (res?.data?.changePasswordOnNextLogin) {
+            this.CreatePasswordHideShow = true;
+            this.LoginDataHideShow = false;
+            this.CreatePasswordInit();
+            this.CreatePasswordForm?.patchValue({
+              username: this.LoginForm.value?.username
+            });
+          }
+          else if (res?.data?.enable2FA && res?.data?.resetGoogleAuthQR) {
+            this.isResetGoogleAuthQR = true;
+            this.token = res?.data?.auth_token;
+            // this.messageService.showSuccess(res?.message);
+            // this.token$.next(res?.data?.auth_token);
+            this.TwoFactorAuthClick();
+          }
+          else if (res?.data?.enable2FA && res?.data?.authenticationType == 3 && !res?.data?.resetGoogleAuthQR) {
+            this.isResetGoogleAuthQR = false;
+            this.token = res?.data?.auth_token;
+            // this.messageService.showSuccess(res?.message);
+            // this.token$.next(res?.data?.auth_token);
+            this.TwoFactorAuthClick();
+          }
+          else {
+            // this.storageService.setEncryptLs('c_tk', res?.data?.auth_token);
+            // this.messageService.showSuccess(res?.message);
+            // this.getSecuritySetting();
+            // this.generalService.resetBehaviorSubjectObservables();    
+            this.generalService.isLogedOut = false;
+            this.generalService.getPermissions(true, res);
+            // this.router.navigateByUrl('/dashboard');
+          }
+        }
+        else {
+          this.messageService.showError(res?.error?.message);
+        }
+      }, (error) => {
+        this.messageService.showError(error?.statusText == 'Unauthorized' ? 'Your session has been expired.' : error?.error?.error?.message);
+      });
+
+    }
+  }
+
+  onCreatePassword() {
+    this.submitted = true;
+    this.isError = false;
+    if (this.CreatePasswordForm.invalid) {
+      this.messageService.showError(this.customMessages.FILL_REQ_FIELDS);
+      this.isError = true;
+      return;
+    }
+    else {
+      this.authenticationService.createNewPassword(this.CreatePasswordForm.getRawValue()).subscribe((res: any) => {
+        if (res?.success === AppConstants.SUCCESS) {
+          this.LoginDataHideShow = true;
+          this.CreatePasswordHideShow = false;
+          this.messageService.showSuccess(res?.message);
+          this.CreatePasswordForm.reset();
+        }
+        else {
+          this.messageService.showError(res?.error?.message);
+        }
+      }, (error) => {
+        this.messageService.showError(error?.statusText == 'Unauthorized' ? 'Your session has been expired.' : error?.error?.error?.message);
+      });
+
+    }
+  }
+
+  ForgotPasswordClick() {
+    this.LoginDataHideShow = false;
+    this.ForgotDataHideShow = true;
+  }
+  ForgotPasswordEmit(event: any) {
+    this.ForgotDataHideShow = event;
+    this.LoginDataHideShow = true;
+  }
+
+  TwoFactorAuthClick() {
+    this.TwoFactorAuthDataHideShow = true
+    this.LoginDataHideShow = false;
+    this.ForgotDataHideShow = false;
+    // this.token = token
+  }
+  TwoFactorAuthEmit(event: any) {
+    this.TwoFactorAuthDataHideShow = event;
+    this.LoginDataHideShow = true;
+    this.ForgotDataHideShow = false;
+  }
+
+  showPassword(type) {
+
+    if (type === 'oldPassword') {
+      this.hidePassword = !this.hidePassword;
+    }
+    else if (type === 'newPassword') {
+      this.hideNewPassword = !this.hideNewPassword;
+    }
+    else if (type === 'confirmPassword') {
+      this.hideConfirmPassword = !this.hideConfirmPassword;
+    }
+    else if (type === 'loginPassword') {
+      this.hidePasswordLogin = !this.hidePasswordLogin;
+    }
+  }
+
+  isTokenExpired(expiration): boolean {
+    return Math.floor(new Date().getTime() / 1000) >= expiration;
+  }
+
+  closeChangePassword() {
+    this.LoginDataHideShow = true;
+    this.CreatePasswordHideShow = false;
+  }
+  onPasswordChange(event) {
+    const pass = event?.target?.value;
+    if (pass.match(new RegExp("[A-Z]"))) {
+      this.isUpper = true;
+    }
+    else {
+      this.isUpper = false;
+    }
+    if (pass.match(new RegExp("[a-z]"))) {
+      this.isLower = true;
+    }
+    else {
+      this.isLower = false;
+    }
+    if (pass.match(new RegExp("[0-9]"))) {
+      this.isNumeric = true;
+    }
+    else {
+      this.isNumeric = false;
+    }
+    if (pass.match(new RegExp(".{8,}"))) {
+      this.isCharacter = true;
+    }
+    else {
+      this.isCharacter = false;
+    }
+  }
+}

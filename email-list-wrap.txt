@@ -1,0 +1,52 @@
+<ng-template pTemplate="content">
+                        <div class="cmn-overlaypanel add-multiple-emails">
+                          <span class="cmn-dialog-title">Add Emails</span>
+
+                          <div class="email-list-wrap scroll-style">
+                            <div class="flex py-1 justify-content-center flex-column field-n-btn-wrap" *ngFor="let item of emailDataList; let i = index">
+                              <div class="flex align-items-center flex-1 mb-0">
+                                <div class="field mb-1 w-full">
+                                  <input class="cmn-input" id="email"
+                                    placeholder="{{'ADDCUSTLABLES.CCEMAIL' | translate}}" [ngModel]="item.ccEmail" [ngModelOptions]="{standalone: true}"
+                                    type="email" [maxLength]="clientConfig?.MAX_LENGTH" (blur)="onAnotherEmail($event, i)"
+                                    aria-describedby="email-help" pInputText />
+                                    <!-- <div class="invalid-feedback" *ngIf="item?.isError">
+                                      {{'MESSAGETITLE.INVALID_EMAIL' | translate }}
+                                    </div>
+                                    <div class="invalid-feedback" *ngIf="item?.isRequired">
+                                      {{'MESSAGETITLE.REQUIRED_EMAIL' | translate }}
+                                    </div> -->
+                                </div>
+  
+                                <div class="btn-container btn-end flex-nowrap w-auto">
+                                  <!-- <button pButton type="button" *ngIf="(i === emailDataList?.length - 1)" icon="pi pi-plus" (click)="addAnotherEmail()"
+                                    class="p-button-success p-mr-2 px-1 w-5 mx-1 cursor-pointer"></button> -->
+                                  <button icon="pi pi-minus" pButton type="button" *ngIf="i === 0 && item.ccEmail || i > 0"  (click)="removeAnotherEmail(i)"
+                                    class="p-button-danger px-1 w-5 mx-1 cursor-pointer"></button>
+                                </div>
+  
+                              </div>
+                              <div class="invalid-feedback" *ngIf="item?.isError">
+                                {{'MESSAGETITLE.INVALID_EMAIL' | translate }}
+                              </div>
+                              <div class="invalid-feedback" *ngIf="item?.isRequired">
+                                {{'MESSAGETITLE.REQUIRED_EMAIL' | translate }}
+                              </div>
+                              <div class="add-more-email text-primary-3 paragraph-text-4 text-left cursor-pointer" *ngIf="(i === emailDataList?.length - 1)" (click)="addAnotherEmail()">
+                                Add more Emails
+                                <!-- <button pButton type="button" *ngIf="(i === emailDataList?.length - 1)" icon="pi pi-plus" (click)="addAnotherEmail()"
+                                    class="p-button-success p-mr-2 px-1 w-5 mx-1 cursor-pointer"></button> -->
+                              </div>
+                            </div>
+                          </div>
+
+                          
+
+                          <span class="btn-container btn-end">
+                            <button pButton class="p-button-primary btn-100 mr-0" (click)="(isccEmailErrorCount === 0 && isccEmailRequiredCount === 0)  ? addEmailsOverlayPanel.hide($event) : ''"
+                              styleClass="p-button-text">
+                              Ok
+                            </button>
+                          </span>
+                        </div>
+                      </ng-template>

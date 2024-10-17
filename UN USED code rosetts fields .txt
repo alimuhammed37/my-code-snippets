@@ -1,0 +1,118 @@
+UN USED 
+
+<ng-template pTemplate="content">
+                        <ng-template pTemplate="header">
+                          <span class="cmn-dialog-title">Add Emails</span>
+                        </ng-template>
+  
+                        <ng-template pTemplate="message">
+                          <div class="cmn-overlaypanel add-multiple-emails email-list-wrap scroll-style">
+                            <div class="">
+                              <div class="flex py-1 justify-content-center flex-column field-n-btn-wrap" *ngFor="let item of emailDataList; let i = index">
+                                <div class="flex align-items-center flex-1 mb-0">
+                                  <div class="field mb-1 w-full">
+                                    <input class="cmn-input" id="email"
+                                      placeholder="{{'ADDCUSTLABLES.CCEMAIL' | translate}}" [ngModel]="item.ccEmail" [ngModelOptions]="{standalone: true}"
+                                      type="email" [maxLength]="clientConfig?.MAX_LENGTH" (blur)="onAnotherEmail($event, i)"
+                                      aria-describedby="email-help" pInputText />
+                                      <!-- <div class="invalid-feedback" *ngIf="item?.isError">
+                                        {{'MESSAGETITLE.INVALID_EMAIL' | translate }}
+                                      </div>
+                                      <div class="invalid-feedback" *ngIf="item?.isRequired">
+                                        {{'MESSAGETITLE.REQUIRED_EMAIL' | translate }}
+                                      </div> -->
+                                  </div>
+    
+                                  <div class="btn-container btn-end flex-nowrap w-auto">
+                                    <!-- <button pButton type="button" *ngIf="(i === emailDataList?.length - 1)" icon="pi pi-plus" (click)="addAnotherEmail()"
+                                      class="p-button-success p-mr-2 px-1 w-5 mx-1 cursor-pointer"></button> -->
+                                    <button icon="pi pi-minus" pButton type="button" *ngIf="i === 0 && item.ccEmail || i > 0"  (click)="removeAnotherEmail(i)"
+                                      class="p-button-danger px-1 w-5 mx-1 cursor-pointer"></button>
+                                  </div>
+    
+                                </div>
+                                <div class="invalid-feedback" *ngIf="item?.isError">
+                                  {{'MESSAGETITLE.INVALID_EMAIL' | translate }}
+                                </div>
+                                <div class="invalid-feedback" *ngIf="item?.isRequired">
+                                  {{'MESSAGETITLE.REQUIRED_EMAIL' | translate }}
+                                </div>
+                                <div class="add-more-email text-primary-3 paragraph-text-4 text-left cursor-pointer" *ngIf="(i === emailDataList?.length - 1)" (click)="addAnotherEmail()">
+                                  Add more Emails
+                                  <!-- <button pButton type="button" *ngIf="(i === emailDataList?.length - 1)" icon="pi pi-plus" (click)="addAnotherEmail()"
+                                      class="p-button-success p-mr-2 px-1 w-5 mx-1 cursor-pointer"></button> -->
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </ng-template>
+  
+                        <ng-template pTemplate="footer">
+                          <span class="btn-container btn-end">
+                            <button pButton class="p-button-primary btn-100 mr-0" (click)="(isccEmailErrorCount === 0 && isccEmailRequiredCount === 0)  ? addEmailsOverlayPanel.hide($event) : ''"
+                              styleClass="p-button-text">
+                              Ok
+                            </button>
+                          </span>
+                        </ng-template>
+                      </ng-template>
+
+
+// rgba(15, 110, 193, 0.1)
+
+
+// https://www.youtube.com/watch?v=icRo7PZXVho&list=TLPQMTIwOTIwMjQbr7ko-LOTpw&index=2
+
+
+
+
+
+
+UNUSED CODE FOR CMN CARD ROSETTS SECTION
+
+<div class="grid cmn-card mb-4 mt-3" *ngIf="typeId === 18">
+        
+        <div class=" p-card w-full">
+          
+          <div class="p-card-header w-full py-0">
+            <div class="col-12 seprator-heading-custom-style mt-3">
+              <div class="flex align-items-center justify-content-between">
+                  <div class="cmn-main-title">Rotessa</div>
+                  <div class="inline-flex">
+                    <div class="custom-task-switch shadow-none border-0 py-1">
+                      <p-inputSwitch></p-inputSwitch>
+                      <label class="paragraph-text-4 ml-2"></label>
+                      <a class="link-icon ml-1 flex align-items-center" pTooltip="Some Text" tooltipPosition="top">
+                        <i class="pi pi-info-circle text-primary text-base"></i>
+                      </a>
+                    </div>
+                  </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="col-12 p-card-body py-1">
+              <div class="grid">
+                <div class="col-12 sm:col-6 md:col-6 lg:col-6 xl:col-6">
+                  <div class="field">
+                    <label for="baseUrl">{{"FORMSFIELD.BASEURL" | translate}}</label>
+                    <input id="baseUrl" placeholder="{{'FORMSFIELD.ENTERBASEURL' | translate}}" type="text"
+                      aria-describedby="baseUrl-help" pInputText formControlName="baseUrl" />
+                    <!-- <app-validation-error [errorLabel]="'FORMSFIELD.BASEURL'"
+                      [errorObj]="cardPaymentForm?.get('baseUrl').errors"
+                      [showIf]="(cardPaymentForm?.get('baseUrl').hasError('required') && cardPaymentForm?.get('baseUrl').touched) || isError">
+                    </app-validation-error> -->
+                  </div>
+                </div>
+                <div class="col-12 sm:col-6 md:col-6 lg:col-6 xl:col-6">
+                  <div class="field">
+                    <label for="apikey">{{"FORMSFIELD.APIKEY" | translate}}</label>
+                    <input id="apikey" placeholder="{{'FORMSFIELD.ENTERAPIKEY' | translate}}" type="text"
+                      aria-describedby="apikey-help" pInputText formControlName="apiKey" />
+                  </div>
+                </div>
+              </div>
+          </div>
+          
+        </div>
+      </div>

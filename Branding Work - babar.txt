@@ -1,0 +1,111 @@
+
+
+
+
+==============
+==============
+
+headerBackground 		: theme-header-bg
+headerIconBg 			: theme-header-boxes
+headerIconColor 		: theme-header-icons
+headerTitle 			: theme-header-title
+
+sideNavigationBackground 	: side-navigation-bg
+sideNavigationIconsAndTextActive: sidenav-icon-hover-color
+
+buttonPrimary 			: primary-1
+loginGradientBG1 		: secondary-32
+loginGradientBG2 		: secondary-34
+generalDashboardHeadingColor 	: secondary-20
+
+
+=================
+=================
+
+
+// branding = [
+  //   { name: 'theme-header-bg', value: '#8AFF33' },
+  //   { name: 'primary-2', value: 'orange' },
+  //   { name: 'header-1', value: 'skyblue' },
+  //   { name: 'header-2', value: 'blue' },
+  // ];
+  branding = [
+         // Header Colors
+         { name: 'theme-header-bg' , value: 'rgb(255, 160, 71)'},
+         { name:' theme-logo-bg', value:'#ffffff'},
+         { name: 'theme-header-boxes', value:'#ffffff'},
+         { name: 'theme-header-icons', value:'#787eff'},
+         { name: 'theme-header-title', value:'#eaeaffde'},
+       
+         // Side Navigation
+         { name: 'side-navigation-bg', value:'#282a42'},
+         { name: 'sidenav-icon-color', value:'#eaeaffde'},
+         { name: 'sidenav-icon-hover-color', value:'#787eff'},
+       
+          // Primary Colors
+         { name: 'primary-1', value: '255, 160, 71'},
+         { name: 'primary-1-opacity', value:'255, 160, 71'},
+         { name: 'primary-4', value: '#7a7eff'},
+         { name: 'primary-4-opacity', value:'#7a7eff'},,
+         { name: 'primary-20', value: 'rgb(255, 160, 71)'},
+       
+        // Secondary Colors
+         { name: 'secondary-2-opacity', value:'rgb(255, 160, 71)'},
+       
+         // Dashboard Title Color
+         { name: 'secondary-20', value: '#787eff'},
+         { name: 'secondary-3', value: '#eaeaffde'},
+         { name: 'secondary-5', value: '#EFF6F9'},
+       
+         //Sidebar BG
+         { name: 'secondary-7', value: '#F7F7F9'},
+       
+           //Boxes All Over The Application
+         { name: 'secondary-8', value: '#ffffff'},
+       
+         //Login BG
+         { name: 'secondary-32', value:'#eaeaffde' },
+         { name: 'secondary-34', value: '#666cff'},
+       
+         //Add integration
+         { name: 'secondary-45', value: '#F7F7F9'}
+  ]
+
+
+
+
+
+let body =document.querySelector('body');
+    this.branding.forEach(brand => {
+      // if (brand.name.includes('opacity')){
+      //   body.style.setProperty(`--${brand.name}`, `rgba(${this.hexToRgb(brand.value)}, 0.4)`);
+      // }
+      // else{
+
+        body.style.setProperty(`--${brand.name}`, brand.value);
+      // }
+    });
+  }
+
+  rgbToHex(r,g,b){
+    return '#' + [r, g, b].map(x => x.toString(16).padStart(2, '0')).join('')
+   }
+ 
+   hexToRgb(hex){
+     return hex.replace(/^#?([a-f\d])([a-f\d])([a-f\d])$/i,(m, r, g, b) => '#' + r + r + g + g + b + b).substring(1).match(/.{2}/g).map(x => parseInt(x, 16))
+    }
+
+This unique company email can be used to upload capture inbox. Users with administrator permissions can change their Capture Upload Email address.
+
+.p-overlaypanel{}
+.p-overlaypanel-content{}
+
+.more-vert-dropdown-content  {
+&.cmn-overlaypanel{
+ul.more-vert-list {
+    max-height: 275px;
+    overflow: auto;
+}
+}}
+
+

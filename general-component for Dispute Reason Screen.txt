@@ -1,0 +1,555 @@
+<div class="general-container-new full-box-content pages-box-cmn-20">
+  <form>
+    <div class="grid">
+      <div class="col-12 md:col-12 lg:col-10 xl:col-8">
+
+        <div class="edit-view-mode-content-box">
+
+          <div class="cmn-card">
+            <p-card styleClass="security">
+              <div class="grid">
+                <div class="col-12">
+                  <div class="cmn-main-title mb-3">
+                    {{ "HEADINGTITLE.GENERALSETTINGS" | translate }}
+                  </div>
+                </div>
+  
+                <div class="col-12">
+                  <div class="detailscreen-tabview w-full left-aligned">
+                    <p-tabView scrollable="true" (onChange)="handleChange($event)">
+                      <p-tabPanel header="{{ 'HEADINGTITLE.INVOICEMODE' | translate }}">
+                        <div class="grid" *ngIf="invoiceSettingEditMode">
+                          <div class="col-12">
+                            <div class="btn-container btn-end">
+                              <button pButton type="submit"
+                                *ngIf="checkPermission(permissionModuleId, 'isUpdate') && invoiceSettingEditMode"
+                                class="p-button-overlay-primary btn-100" (click)="changeInvoiceMode()">
+                                <svg-icon src="{{ orangeSave }}" class="svg-icon"></svg-icon>{{ "ACTION.SAVE" |
+                                translate }}
+                              </button>
+                              <button pButton type="button" class="p-button-overlay-danger btn-100"
+                                *ngIf="invoiceSettingEditMode" (click)="invoiceSettingViewCancelMode()">
+                                <svg-icon src="{{ cancelIcon }}" class="svg-icon"></svg-icon>{{ "ACTION.CANCEL"
+                                | translate }}
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="grid" *ngIf="invoiceSettingViewMode">
+                          <div class="col-12">
+                            <div class="btn-container btn-end" *ngIf="checkPermission(permissionModuleId, 'isUpdate')">
+                              <button pButton type="button" class="p-button-overlay-primary btn-100"
+                                *ngIf="invoiceSettingViewMode" (click)="invoiceSettingViewEditMode()">
+                                <svg-icon src="{{ editYellowIcon }}" class="svg-icon"></svg-icon>{{
+                                "ACTION.EDIT" |
+                                translate }}
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="grid grid-nogutter">
+                          <div class="sm:col-10 md:col-10 lg:col-10 all-section-space" *ngIf="invoiceSettingViewMode">
+                            <ul class="lable-value-list">
+                              <li class="lable-value-list-item">
+                                <div class="lable-text">{{"HEADINGTITLE.INVOICEMODE" | translate}}</div>
+                                <div class="value-text">{{invoiceMode === true ?'Simple' : 'Normal'}}</div>
+                              </li>
+                              <li class="lable-value-list-item">
+                                <div class="lable-text">{{"HEADINGTITLE.ALLOWBACKDATEDINVOICES" | translate}}</div>
+                                <div class="value-text">{{isAllowedBackDatedInvoices === true ? 'Yes': 'No'}}</div>
+                              </li>
+                              <li class="lable-value-list-item">
+                                <div class="lable-text">{{'QRCODE.ENABLEQRCODEFORINVOICE' | translate}}</div>
+                                <div class="value-text">{{hasShowQR === true ? 'Yes': 'No'}}</div>
+                              </li>
+                              <!-- <li class="lable-value-list-item">
+                                <div class="lable-text">{{'QRCODE.FOREGROUND' | translate}}</div>
+                                <div class="value-text">{{foreColor}}</div>
+                              </li>
+                              <li class="lable-value-list-item">
+                                <div class="lable-text">{{'QRCODE.BACKGROUND' | translate}}</div>
+                                <div class="value-text">{{backColor}}</div>
+                              </li> -->
+                            </ul>
+                          </div>
+  
+  
+                        </div>
+                        <div *ngIf="invoiceSettingEditMode">
+
+
+                          <div class="grid mt-3">
+                            <div class="col-12 md:col-4">
+                              <div class="field">
+                                <h4 class="mb-2 text-primary-2 font-medium">{{'HEADINGTITLE.INVOICEMODE' | translate}} <span
+                                    class="info-icon-wrapper" *ngIf="clientConfig?.HELPICON">
+                                    <i *ngIf="invoiceMode===false" class="pi pi-question-circle cursor-help helpIcon"
+                                      tooltipStyleClass="cmn-tooltip"
+                                      pTooltip="{{ 'HELPICONS.INVOICEMODE_GENERAL_NORMAL' | translate }}"
+                                      tooltipPosition="{{tooltipAlignment}}"></i>
+                                    <i *ngIf="invoiceMode" class="pi pi-question-circle cursor-help helpIcon"
+                                      tooltipStyleClass="cmn-tooltip"
+                                      pTooltip="{{ 'HELPICONS.INVOICEMODE_GENERAL_SAMPLE' | translate }}"
+                                      tooltipPosition="{{tooltipAlignment}}"></i>
+                                  </span></h4>
+                                <p-selectButton styleClass="custom-select-btn" [options]="stateOptions" optionLabel="label"
+                                  optionValue="value" id="invoiceMode" [(ngModel)]="invoiceMode"
+                                  [ngModelOptions]="{standalone: true}"></p-selectButton>
+                              </div>
+                            </div>
+                            <div class="col-12 md:col-4">
+                              <div class="field">
+                                <h4 class="mb-2 text-primary-2 font-medium">{{'HEADINGTITLE.ALLOWBACKDATEDINVOICES' | translate}}</h4>
+                                <!-- <p-selectButton styleClass="custom-select-btn" [options]="backDateOptions" optionLabel="label"
+                                  optionValue="value" id="invoiceMode" [(ngModel)]="isAllowedBackDatedInvoices"
+                                  [ngModelOptions]="{standalone: true}"></p-selectButton> -->
+                                  <p-inputSwitch [(ngModel)]="isAllowedBackDatedInvoices"
+                                  [ngModelOptions]="{standalone: true}"></p-inputSwitch>
+                              </div>
+                            </div>
+                            
+                          </div>
+
+                          <div class="qrcode-invoices">
+                            <div class="grid">
+                              <div class="col-12 md:col-12">
+                                <div class="custom-task-switch mb-5">
+                                  <p-inputSwitch [(ngModel)]="hasShowQR"
+                                  [ngModelOptions]="{standalone: true}" (onChange)="onToggleChange($event)"></p-inputSwitch>
+                                  <div class="paragraph-text-11">
+                                      {{ "QRCODE.ENABLEQRCODEFORINVOICE" | translate }}
+                                  </div>
+                                </div>
+                              </div>
+                              <!-- <div class="col-12 md:col-12">
+                                <div class="custom-task-switch mb-5">
+                                  <div class="paragraph-text-4 text-primary-15" >
+                                      {{ "QRCODE.MESSAGEQRCODEFORINVOICE" | translate }}
+                                  </div>
+                                </div>
+                              </div> -->
+                              <div *ngIf="hasShowQR" class="col-12 md:col-7">
+                              <div class="grid">
+                                <div class="col-12">
+                                  <label class="paragraph-text-10">Colors (Optional)</label>
+                                </div>
+                              </div>
+                               
+                                <div class="pages-box-cmn-20 custom-color-selector branding mt-2 mb-2">
+  
+                                  <div class="grid">
+
+                                    <div class="col-12 md:col-6">
+                                      <div class="colorPicker">
+                                        <label class="paragraph-text-11"> {{ "QRCODE.FOREGROUND" | translate }}</label>
+                                        <div class="flex align-items-center">
+                                          <input [(ngModel)]="foreColor" (keyup)="onForeColorChange($event)" [ngModelOptions]="{standalone: true}" pattern="^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$" required [maxLength]="clientConfig?.MAX_LENGTH_COLOR" pInputText class="cmn-input p-colorpicker-preview" />
+                                          <p-colorPicker styleClass="ml-2" [(ngModel)]="foreColor" (onChange)="onForeColorChange($event)" [ngModelOptions]="{standalone: true}"></p-colorPicker>
+                                        </div>
+                                      </div>
+                                      <span *ngIf="!isForeValid" class="invalid-feedback"><i class="pi pi-times-circle" style="color:red"></i> {{ "QRCODE.INVALIDCOLOR" | translate }}</span>
+                                    </div>
+                                    <!-- <div class="col-12 md:col-2 relative">
+                                      <p-colorPicker [(ngModel)]="foreColor" (onChange)="onForeColorChange($event)" [ngModelOptions]="{standalone: true}"></p-colorPicker>
+                                      <span *ngIf="!isForeValid" ><i class="pi pi-times-circle" ></i> Invalid color code</span>
+                                    </div> -->
+                                    <!-- <div class="col-12 md:col-2 flex align-items-center">
+                                      <label class="paragraph-text-11">&nbsp;</label>
+                                     
+                                    </div> -->
+                                    <div class="col-12 md:col-6">
+                                      <div class="colorPicker">
+                                        <label class="paragraph-text-11">{{ "QRCODE.BACKGROUND" | translate }}</label>
+                                        <div class="flex align-items-center">
+                                          <input [(ngModel)]="backColor" (keyup)="onBackColorChange($event)" [ngModelOptions]="{standalone: true}"  [maxLength]="clientConfig?.MAX_LENGTH_COLOR" pInputText class="cmn-input p-colorpicker-preview" />
+                                          <p-colorPicker styleClass="ml-2" [(ngModel)]="backColor" (onChange)="onBackColorChange($event)" [ngModelOptions]="{standalone: true}"></p-colorPicker>
+                                        </div>
+                                     
+                                    </div>
+                                    <span *ngIf="!isBackValid" class="invalid-feedback"><i class="pi pi-times-circle" style="color:red"></i> {{ "QRCODE.INVALIDCOLOR" | translate }}</span>
+                                    <!-- <span *ngIf="!isBackValid" ><i class="pi pi-times-circle"></i> Invalid color code</span> -->
+                                  </div>
+                                    <!-- <div class="col-12 md:col-2 flex align-items-center">
+                                      <label class="paragraph-text-11">&nbsp;</label>
+                                    
+                                    </div> -->
+                                  </div>
+                                </div>
+                              </div>
+                              <div *ngIf="hasShowQR" class="col-12 md:col-5 flex justify-content-center  ">
+                                <div class="flex-column align-items-end">
+                                  <div class="qrcode">
+                                    <div class="qrcodeImage white-shadow-box">
+                                      
+                                      <qrcode
+                                        [allowEmptyString]="true"
+                                        [colorDark]="isForeValid ? foreColor : '#000000'"
+                                        [colorLight]="isBackValid ? backColor : '#FFFFFF'"
+                                        [imageHeight]="75"
+                                        [imageWidth]="75"
+                                        [margin]="1"
+                                        [width]="200"
+                                      ></qrcode>
+                                    </div>
+                                  </div> 
+                                </div>
+                              </div>
+                              
+                            </div>
+  
+                          </div>
+                        </div>
+
+
+
+                        
+
+                      </p-tabPanel>
+                      <p-tabPanel header="{{ 'HEADINGTITLE.CREDITNOTE' | translate }}">
+  
+                        <div class="grid" *ngIf="invoiceSettingEditMode">
+                          <div class="col-12">
+                            <div class="btn-container btn-end">
+                             <button pButton type="submit"
+                                *ngIf="checkPermission(permissionModuleId, 'isUpdate') && invoiceSettingEditMode"
+                                class="p-button-overlay-primary btn-100" (click)="changeCreditNotesMode()">
+                                <svg-icon src="{{ orangeSave }}" class="svg-icon"></svg-icon>{{ "ACTION.SAVE" | translate }}
+                              </button>
+                              <button pButton type="button" class="p-button-overlay-danger btn-100"
+                                *ngIf="invoiceSettingEditMode" (click)="invoiceSettingViewCancelMode()">
+                                <svg-icon src="{{ cancelIcon }}" class="svg-icon"></svg-icon>{{ "ACTION.CANCEL" | translate }}
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="grid" *ngIf="invoiceSettingViewMode">
+                          <div class="col-12">
+                            <div class="btn-container btn-end" *ngIf="checkPermission(permissionModuleId, 'isUpdate')">
+                              <button pButton type="button" class="p-button-overlay-primary btn-100"
+                                *ngIf="invoiceSettingViewMode" (click)="invoiceSettingViewEditMode()">
+                                <svg-icon src="{{ editYellowIcon }}" class="svg-icon"></svg-icon>{{
+                                "ACTION.EDIT" |
+                                translate }}
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="grid grid-nogutter">
+                          <div class="sm:col-10 md:col-10 lg:col-10 all-section-space" *ngIf="invoiceSettingViewMode">
+                            <ul class="lable-value-list">
+                              <li class="lable-value-list-item">
+                                <div class="lable-text">{{"HEADINGTITLE.CREDITNOTEMODE" | translate}}</div>
+                                <div class="value-text">{{isAutoCreditNotesApplied === true ?'Auto' : 'Manual'}}</div>
+                              </li>
+                              <li class="lable-value-list-item" *ngIf="creditNoteOverPayModeName && !isSkippedCreditNote">
+                                <div class="lable-text">{{"HEADINGTITLE.CREDITNOTEDEFAULT" | translate}}</div>
+                                <div class="value-text">{{creditNoteOverPayModeName}}</div>
+                              </li>
+                              <li class="lable-value-list-item" *ngIf="isSkippedCreditNote">
+                                <div class="lable-text">{{"HEADINGTITLE.SKIPCREDITNOTESCREATION" | translate}}</div>
+                                <div class="value-text ml-2">{{isSkippedCreditNote ?  'Yes' : 'No'}}</div>
+                              </li>
+                            </ul>
+                          </div>
+                        </div>
+                        <div *ngIf="invoiceSettingEditMode">
+                          <div class="col-12 sm:col-12 md:col-12 lg:col-12 xl:col-12">
+                            <div class="field">
+                              <h4 class="text-primary-2 font-medium flex align-items-center">{{ 'HEADINGTITLE.AUTOAPPLYCREDITNOTES' | translate }}
+                                <span class="info-icon-wrapper ml-1">
+                                  <i *ngIf="isAutoCreditNotesApplied" class="pi pi-question-circle cursor-help helpIcon"
+                                    tooltipStyleClass="cmn-tooltip"
+                                    pTooltip="{{ 'HELPICONS.CREDITNOTEMODE_AUTO' | translate }}"
+                                    tooltipPosition="{{tooltipAlignment}}"></i>
+                                  <i *ngIf="!isAutoCreditNotesApplied" class="pi pi-question-circle cursor-help helpIcon"
+                                    tooltipStyleClass="cmn-tooltip"
+                                    pTooltip="{{ 'HELPICONS.CREDITNOTEMODE_MANUAL' | translate }}"
+                                    tooltipPosition="{{tooltipAlignment}}"></i>
+                                </span>
+                                <p-inputSwitch class="ml-5 mt-1" [(ngModel)]="isAutoCreditNotesApplied"
+                                [ngModelOptions]="{standalone: true}"></p-inputSwitch>
+                              </h4>
+                            </div>
+                          </div>
+                          <div class="col-12 sm:col-12 md:col-12 lg:col-12 xl:col-12">
+                           
+                              <h4 class="text-primary-2 font-medium flex align-items-center">{{ 'HEADINGTITLE.SKIPCREDITNOTESCREATION' | translate }}
+                                <span class="info-icon-wrapper ml-1">
+                                  <i class="pi pi-question-circle cursor-help helpIcon"
+                                  tooltipStyleClass="cmn-tooltip"
+                                  pTooltip="{{ 'HELPICONS.CREDITNOTEINFO' | translate }}"
+                                  tooltipPosition="{{tooltipAlignment}}"></i>
+                                </span>
+                                <p-inputSwitch class="ml-4 mt-1" [(ngModel)]="isSkippedCreditNote"
+                                [ngModelOptions]="{standalone: true}"></p-inputSwitch>
+                              </h4>
+                           
+                          </div>
+                          <div class="col-12 sm:col-12 md:col-5 lg:col-5 xl:col-5" *ngIf="!isSkippedCreditNote">
+                            <div class="field block">
+                              <!-- <label for="name">{{"HEADINGTITLE.CREDITNOTEDEFAULT" | translate}}   <span class="info-icon-wrapper">
+                              
+                                <i class="pi pi-question-circle cursor-help helpIcon"
+                                  tooltipStyleClass="cmn-tooltip"
+                                  pTooltip="{{ 'HELPICONS.CREDITNOTEINFO' | translate }}"
+                                  tooltipPosition="{{tooltipAlignment}}"></i>
+                              
+  
+                              </span>
+                            </label> -->
+                              <p-dropdown [(ngModel)]="creditNoteOverPayMode" [ngModelOptions]="{standalone: true}" (onChange)="getOverpayValue($event)"
+                                styleClass="mt-2 w-full z-99" [options]="OverPayDropdownList" placeholder="Apply credit notes on overpay"
+                                optionLabel="name"
+                                optionValue="id"
+                                [showClear]="creditNoteOverPayMode ? true : false"
+                                [resetFilterOnHide]="true"
+                                ></p-dropdown>
+                                <span *ngIf="isOverpay" class="text-primary-8 mt-2">This field is required</span>
+                              <!-- <cadency-validation-error [errorLabel]="'State/Province'"
+                                [errorObj]="companySettingsProfileForm?.get('stateName').errors"
+                                [showIf]="(companySettingsProfileForm?.get('stateName').hasError('required')) && isError">
+                              </cadency-validation-error> -->
+                            </div>
+                          </div>
+  
+                          <!-- <div class=" btn-container btn-end">
+                          <button pButton type="submit" class="p-button-primary btn-150 mr-4"
+                            (click)="changeCreditNotesMode()">
+                            {{ "ACTION.SAVE" | translate }}
+                          </button>
+                          <button pButton type="button" class="p-button-secondary btn-150"
+                            (click)="redirectToCompanySetting()">
+                            {{ "ACTION.CANCEL" | translate }}
+                          </button> -->
+                        </div>
+  
+                      </p-tabPanel>
+  
+  
+                      <p-tabPanel header=" {{ 'DISPUTEREASON.TITLE' | translate }}">
+  
+  
+  
+                        <div class="table-container dispute-content-wrapper card-view-table grid-header-transparent"
+                          ngxUiLoaderBlurred>
+                          <p-table #dt1 [value]="disputeReasonData" [globalFilterFields]="['name']"
+                            breakpoint="{{ Breakpoint }}" responsiveLayout="{{ responsiveLayout }}"
+                            scrollDirection="{{ ScrollDirection }}" [totalRecords]="totalRecords">
+                            <ng-template pTemplate="caption">
+                              <div class="grid-header-section" *ngIf="!isAdd">
+                                <ul class="grid-left-list">
+                                  <li class="grid-left-list-item">
+                                    <div class="input-container">
+                                      <input (input)="dt1.filterGlobal($event.target.value, 'contains')" id="searchText"
+                                        type="text" [(ngModel)]="SearchText" class="grid-input" pInputText
+                                        [ngModelOptions]="{standalone: true}" placeholder="Search by name" />
+                                    </div>
+                                  </li>
+                                  <li class="grid-left-list-item">
+                                    <div class="btn-container">
+                                      <button pButton type="button" severity="danger"
+                                        class="p-button-secondary button-with-icon btn-150" (click)="clearSearch(dt1)">
+                                        {{ "ACTION.CLEAR" | translate }}
+                                        <svg-icon src="{{ clearFilter }}" class="svg-icon"></svg-icon>
+                                      </button>
+                                    </div>
+                                  </li>
+                                </ul>
+  
+                                <div class="edit-view-mode-content-box">
+  
+                                  <div class="btn-container btn-end md:mt-0 mb-3">
+                                    <!-- <ul>
+                                    <li> -->
+                                    <button pButton type="button" (click)="onAdd(dt1)"
+                                      class="p-button-overlay-primary btn-100">
+                                      <svg-icon src="{{ plusIcon }}" class="svg-icon">
+                                      </svg-icon>{{
+                                      "ACTION.ADD" | translate }}
+                                    </button>
+                                    <!-- </li>
+  
+                                  </ul> -->
+                                  </div>
+  
+                                </div>
+  
+                              </div>
+                              <div>
+                                <ul>
+                                  <li *ngIf="isAdd">
+                                    <form [formGroup]="disputeReasonForm" *ngIf="disputeReasonForm">
+                                      <div class="edit-view-mode-content-box grid mb-4 align-items-center justify-content-between">
+                                        <div class="col-12 sm:col-6 md:col-6 lg:col-6 relative">
+                                          <!-- <input type="text" pInputText placeholder="Name" /> -->
+                                          <input id="email" placeholder="{{'FORMSFIELD.ADDREASON' | translate}}" type="text"
+                                            aria-describedby="companyEmail-help" pInputText formControlName="name"
+                                            [maxLength]="clientConfig?.MAX_LENGTH" />
+                                            <div class="relative md:absolute">
+                                                <cadency-validation-error 
+                                                [errorLabel]="'FORMSFIELD.NAME'"
+                                                [errorObj]="disputeReasonForm?.get('name').errors"
+                                                [showIf]="(disputeReasonForm?.get('name').hasError('required') && disputeReasonForm?.get('name').touched) || isError">
+                                              </cadency-validation-error>
+                                            </div>
+                                        </div>
+                                        <div class="col-12 sm:col-2 md:col-12 lg:col-2 flex align-items-center justify-content-center lg:justify-content-end">
+                                          <div class="field mb-0">
+                                            <!-- <span class="info-icon-wrapper">
+                                            <i *ngIf="isAutoCreditNotesApplied" class="pi pi-question-circle cursor-help helpIcon"
+                                              tooltipStyleClass="cmn-tooltip"
+                                              pTooltip="{{ 'HELPICONS.CREDITNOTEMODE_AUTO' | translate }}"
+                                              tooltipPosition="{{tooltipAlignment}}"></i>
+                                            <i *ngIf="!isAutoCreditNotesApplied" class="pi pi-question-circle cursor-help helpIcon"
+                                              tooltipStyleClass="cmn-tooltip"
+                                              pTooltip="{{ 'HELPICONS.CREDITNOTEMODE_MANUAL' | translate }}"
+                                              tooltipPosition="{{tooltipAlignment}}"></i>
+                                          </span> -->
+                                            <p-selectButton styleClass="custom-select-btn" [options]="reasonStatus"
+                                              optionLabel="label" formControlName="status" optionValue="value"
+                                              id="isAutoCreditNotesApplied"></p-selectButton>
+                                          </div>
+                                        </div>
+  
+                                        <!-- <div class="col-12 sm:col-4 md:col-12 lg:col-4 flex align-items-center">
+                                          <div class="btn-container btn-end md:mt-0">
+                                            
+                                            <button pButton type="button" class="p-button-overlay-primary btn-100"
+                                              (click)="saveReason()">
+                                              <svg-icon src=" {{ orangeSave }}" class="svg-icon">
+                                              </svg-icon>{{
+                                              "ACTION.SAVE" | translate }}
+                                            </button>
+                                            
+                                            <button pButton type="button" class="p-button-overlay-danger btn-100"
+                                              (click)="onCancel()">
+                                              <svg-icon src="{{ cancelIcon }}" class="svg-icon">
+                                              </svg-icon>{{
+                                              "ACTION.CANCEL" | translate }}
+                                            </button>
+                                           
+                                          </div>
+                                        </div> -->
+                                        
+                                      </div>
+                                      
+                                      <!-- <div class="col-12"> -->
+                                        <div class="col-12 sm:col-4 md:col-12 lg:col-4 flex align-items-center justify-content-center lg:justify-content-start p-0">
+                                          <div class="btn-container btn-start md:mt-0">
+                                            
+                                            <button pButton type="button" class="p-button-overlay-primary btn-100"
+                                              (click)="saveReason()">
+                                              <svg-icon src=" {{ orangeSave }}" class="svg-icon">
+                                              </svg-icon>{{
+                                              "ACTION.SAVE" | translate }}
+                                            </button>
+                                            
+                                            <button pButton type="button" class="p-button-overlay-danger btn-100"
+                                              (click)="onCancel()">
+                                              <svg-icon src="{{ cancelIcon }}" class="svg-icon">
+                                              </svg-icon>{{
+                                              "ACTION.CANCEL" | translate }}
+                                            </button>
+                                           
+                                          </div>
+                                        </div>
+                                      <!-- </div> -->
+
+                                    </form>
+                                  </li>
+                                </ul>
+                              </div>
+  
+                            </ng-template>
+                            <ng-template pTemplate="header">
+                              <tr>
+                                <th class="{{ col.columnClass }}" *ngFor="let col of gridHeader">
+                                  {{ col.gridHeaderTitle | translate }}
+                                </th>
+                              </tr>
+                            </ng-template>
+                            <ng-template pTemplate="body" let-disputeReasonData>
+                              <tr>
+                                <td class="td-template-name max-width-450">
+                                  <span class="p-column-title">{{
+                                    "GRIDFIELD.DISPUTEREASON" | translate
+                                    }}</span>
+                                  <div class="paragraph-text-1 wrap-text-all">
+                                    {{ disputeReasonData?.name }}
+                                  </div>
+                                </td>
+                                <td class="td-status max-width-250">
+                                  <span class="p-column-title">{{
+                                    "GRIDFIELD.STATUS" | translate
+                                    }}</span>
+                                  <div [ngClass]="disputeReasonData?.status ? 'status-green' : 'status-red'"
+                                    class="status-container">{{ disputeReasonData?.status ? 'Active' : 'Inactive' }}</div>
+                                  <!-- <div class="paragraph-text-4 wrap-text-all">
+                                    <b>{{ disputeReasonData?.status ? 'Active' : 'Inactive' }}</b>
+                                  </div> -->
+                                </td>
+                                <td class="td-action max-width-120">
+                                  <span class="p-column-title">{{
+                                    "GRIDFIELD.ACTIONS" | translate
+                                    }}</span>
+                                  <div class="btn-container btn-end mr-2">
+                                    <button pButton type="button" class="more-vert-btn"
+                                      (click)="moreVertMenu.toggle($event)">
+                                      <svg-icon src="{{ moreVertGridIcon }}" class="svg-icon"></svg-icon>
+                                    </button>
+                                    <p-overlayPanel #moreVertMenu styleClass="more-vert-container">
+                                      <ng-template pTemplate>
+                                        <div class="more-vert-dropdown-content cmn-overlaypanel">
+                                          <ul class="more-vert-list">
+                                            <li class="more-vert-list-item" *ngFor="let item of actionDataList"
+                                              (click)="disputeReasonActionClick(item,disputeReasonData); moreVertMenu.hide();">
+                                              <a class="more-vert-list-item-link">{{ item.label }}</a>
+                                            </li>
+                                          </ul>
+                                        </div>
+                                      </ng-template>
+                                    </p-overlayPanel>
+                                  </div>
+                                </td>
+                              </tr>
+                            </ng-template>
+                            <!-- <ng-template pTemplate="paginatorleft" let-state>{{
+                              "MESSAGETITLE.PAGINATIONMESSAGE" | translate
+                              }}</ng-template> -->
+                            <ng-template pTemplate="emptymessage" let-columns>
+                              <tr>
+                                <td>
+                                  No records found
+                                </td>
+                              </tr>
+                            </ng-template>
+                            <!-- <cadency-no-data-found *ngIf="!isReason"></cadency-no-data-found> -->
+                          </p-table>
+                        </div>
+                      </p-tabPanel>
+                    </p-tabView>
+                  </div>
+  
+                </div>
+  
+              </div>
+            </p-card>
+          </div>
+
+
+        </div>
+        
+
+      </div>
+    </div>
+
+    <!-- <div class="btn-container">
+        <button pButton type="submit" class="p-button-primary button-with-icon btn-150">
+          {{ "ACTION.SAVE" | translate }}
+        </button>
+      </div> -->
+  </form>
+</div>
+
+<cadency-alert [AlertDataPass]="AlertDataPass" (removeData)="isRemoveInvoiceTerm($event)" *ngIf="visibleAlert">
+</cadency-alert>

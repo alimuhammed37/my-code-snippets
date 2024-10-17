@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .block {
+	 width: 30px;
+	 height: 30px;
+	 border-radius: 50%;
+	 position: relative;
+	 margin: 50px;
+	 display: inline-block;
+}
+ .beacon {
+	 background: #fab2b6;
+}
+ .beacon-1:before, .beacon-1:after {
+	 content: '';
+	 display: block;
+	 width: 30px;
+	 height: 30px;
+	 border-radius: 50%;
+	 background: #ec506a;
+	 position: absolute;
+	 top: 0;
+	 left: 0;
+	 animation: beacon 2.4s linear 0.6s infinite;
+}
+ .beacon-1:after {
+	 animation: beacon 1.8s linear infinite;
+}
+ @keyframes beacon {
+	 0% {
+		 transform: scale(0);
+		 opacity: 1;
+	}
+	 100% {
+		 transform: scale(1.5);
+		 opacity: 0;
+	}
+}
+    .beacon-center {
+        width: 20px;
+        height: 20px;
+        background: #ff0000;
+        border-radius: 10px;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+ 
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="block beacon beacon-1">
+            <div class="beacon-center"></div>
+          </div>
+    </div>1
+</body>
+</html>
